@@ -1,0 +1,35 @@
+import { Module } from '@nestjs/common';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
+import { PhotoModule } from './photo/photo.module';
+import { User } from './users/models/user.model';
+import { Photo } from './photo/models/photo.model';
+import { UserPhoto } from './photo/models/user_photo.model';
+import { AuthModule } from './auth/auth.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+    }),
+    SequelizeModule.forRoot({
+      dialect: 'postgres',
+      host: process.env.db_host,
+      port: +process.env.db_port,
+      username: process.env.db_username,
+      password: process.env.db_password,
+      database: process.env.db_database,
+      models: [User, Photo, UserPhoto],
+      logging: false,
+      autoLoadModels: true,
+    }),
+    UsersModule,
+    PhotoModule,
+    AuthModule,
+  ],
+  controllers: [],
+  providers: [],
+})
+export class AppModule {}
