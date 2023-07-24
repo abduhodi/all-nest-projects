@@ -12,6 +12,7 @@ async function bootstrap() {
     .setTitle('Instagram Clone API')
     .setDescription('API for clone version of instagram')
     .setVersion('1.0.0')
+    .addBearerAuth({ type: 'apiKey', name: 'Authorization', in: 'header' })
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

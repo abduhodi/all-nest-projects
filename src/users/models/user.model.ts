@@ -6,8 +6,13 @@ import {
   HasMany,
   BelongsToMany,
 } from 'sequelize-typescript';
+import { CommentLike } from 'src/comment/models/comment-like.model';
+import { Comment } from 'src/comment/models/comment.model';
+import { PhotoLike } from 'src/photo/models/photo-like.model';
 import { Photo } from 'src/photo/models/photo.model';
 import { UserPhoto } from 'src/photo/models/user_photo.model';
+import { Role } from 'src/roles/models/role.model';
+import { UserRoles } from 'src/roles/models/user-roles.model';
 
 interface UserAttribute {
   name: string;
@@ -44,4 +49,16 @@ export class User extends Model<User, UserAttribute> {
 
   @BelongsToMany(() => Photo, () => UserPhoto)
   photos: Photo[];
+
+  @HasMany(() => Comment)
+  comments: Comment[];
+
+  @BelongsToMany(() => Comment, () => CommentLike)
+  likedComments: Comment[];
+
+  @BelongsToMany(() => Photo, () => PhotoLike)
+  likedPhotos: Photo[];
+
+  @BelongsToMany(() => Role, () => UserRoles)
+  roles: Role[];
 }

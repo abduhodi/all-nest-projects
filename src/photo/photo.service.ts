@@ -1,12 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreatePhotoDto } from './dto/create-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Photo } from './models/photo.model';
+import { PhotoLikeDto } from './dto/photo-like.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PhotoService {
-  constructor(@InjectModel(Photo) private readonly photoRepo: typeof Photo) {}
+  constructor(
+    @InjectModel(Photo) private readonly photoRepo: typeof Photo,
+    private readonly userService: UsersService,
+  ) {}
 
   async create(createPhotoDto: CreatePhotoDto): Promise<Photo> {
     const { users, ...newPhoto } = createPhotoDto;
@@ -26,17 +31,13 @@ export class PhotoService {
       },
       include: {
         all: true,
-        attributes: {
-          exclude: ['createdAt', 'updatedAt'],
-        },
-        through: { attributes: [] },
       },
     });
   }
 
-  async findOne(id: number): Promise<Photo[]> {
-    return this.photoRepo.findAll({
-      include: { all: true, through: { attributes: [] }, where: { id } },
+  async findOne(id: number): Promise<Photo> {
+    return this.photoRepo.findOne({
+      include: { all: true, where: { id } },
     });
   }
 
@@ -50,5 +51,30 @@ export class PhotoService {
 
   async remove(id: number): Promise<number> {
     return this.photoRepo.destroy({ where: { id } });
+  }
+
+  async likePhoto(photoLikeDto: PhotoLikeDto) {
+    const user = await this.userService.findOne(photoLikeDto.userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    const photo = await this.photoRepo.findByPk(photoLikeDto.photoId);
+    if (!photo) {
+      throw new HttpException('Photo not found', HttpStatus.NOT_FOUND);
+    }
+
+    await photo.$set('likes', [user.id]);
+    await user.$set('likedPhotos', [photo.id]);
+
+    const updatedPhoto = await this.photoRepo.findByPk(photo.id, {
+      include: { all: true },
+    });
+
+    return {
+      id: updatedPhoto.id,
+      link: updatedPhoto.link,
+      likes: updatedPhoto.likes,
+    };
   }
 }

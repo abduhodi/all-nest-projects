@@ -19,8 +19,6 @@ export class UsersService {
       },
       include: {
         all: true,
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        through: { attributes: [] },
       },
     });
   }
@@ -32,8 +30,6 @@ export class UsersService {
       },
       include: {
         all: true,
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        through: { attributes: [] },
       },
     });
   }
@@ -41,6 +37,7 @@ export class UsersService {
   async findByUsername(username: string): Promise<User> {
     return this.userRepo.findOne({
       where: { username },
+      include: { all: true },
     });
   }
 

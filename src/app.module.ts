@@ -7,6 +7,13 @@ import { User } from './users/models/user.model';
 import { Photo } from './photo/models/photo.model';
 import { UserPhoto } from './photo/models/user_photo.model';
 import { AuthModule } from './auth/auth.module';
+import { CommentModule } from './comment/comment.module';
+import { Comment } from './comment/models/comment.model';
+import { CommentLike } from './comment/models/comment-like.model';
+import { PhotoLike } from './photo/models/photo-like.model';
+import { Role } from './roles/models/role.model';
+import { RolesModule } from './roles/roles.module';
+import { UserRoles } from './roles/models/user-roles.model';
 
 @Module({
   imports: [
@@ -21,13 +28,24 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.db_username,
       password: process.env.db_password,
       database: process.env.db_database,
-      models: [User, Photo, UserPhoto],
+      models: [
+        User,
+        Photo,
+        UserPhoto,
+        Comment,
+        CommentLike,
+        PhotoLike,
+        Role,
+        UserRoles,
+      ],
       logging: false,
       autoLoadModels: true,
     }),
     UsersModule,
     PhotoModule,
     AuthModule,
+    CommentModule,
+    RolesModule,
   ],
   controllers: [],
   providers: [],

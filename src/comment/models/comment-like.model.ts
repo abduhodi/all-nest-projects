@@ -1,36 +1,35 @@
 import {
+  Model,
+  Table,
   Column,
   DataType,
   ForeignKey,
-  Model,
-  Table,
 } from 'sequelize-typescript';
+import { Comment } from './comment.model';
 import { User } from 'src/users/models/user.model';
-import { Photo } from './photo.model';
 
-interface UserPhotoAttribute {
+interface CommentLikeAttribute {
+  commentId: number;
   userId: number;
-  photoId: number;
 }
 
-@Table({ tableName: 'user_photo' })
-export class UserPhoto extends Model<UserPhoto, UserPhotoAttribute> {
+@Table({ tableName: 'comment_like' })
+export class CommentLike extends Model<CommentLike, CommentLikeAttribute> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   })
   id: number;
+  @ForeignKey(() => Comment)
+  @Column({
+    type: DataType.INTEGER,
+  })
+  commentId: number;
 
   @ForeignKey(() => User)
   @Column({
     type: DataType.INTEGER,
   })
   userId: number;
-
-  @ForeignKey(() => Photo)
-  @Column({
-    type: DataType.INTEGER,
-  })
-  photoId: number;
 }
