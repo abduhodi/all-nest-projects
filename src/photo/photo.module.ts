@@ -6,8 +6,6 @@ import { Photo } from './models/photo.model';
 import { PhotoLike } from './models/photo-like.model';
 import { UsersModule } from 'src/users/users.module';
 import { UserPhoto } from './models/user_photo.model';
-import { APP_GUARD } from '@nestjs/core';
-import { RolesGuard } from 'src/guards/roles.guards';
 
 @Module({
   imports: [
@@ -15,9 +13,6 @@ import { RolesGuard } from 'src/guards/roles.guards';
     forwardRef(() => UsersModule),
   ],
   controllers: [PhotoController],
-  providers: [
-    PhotoService,
-    // { provide: APP_GUARD, useClass: RolesGuard }
-  ],
+  providers: [PhotoService],
 })
 export class PhotoModule {}

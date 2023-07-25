@@ -6,7 +6,7 @@ import {
   ForbiddenException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { Reflector } from '@Nestjs/core';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Role } from 'src/roles/models/role.model';
 
@@ -28,7 +28,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const [bearer, token] = request.headers?.authorization.split(' ') ?? [];
+    const [bearer, token] = request.headers?.authorization?.split(' ') ?? [];
 
     if (bearer !== 'Bearer' || token) {
       throw new UnauthorizedException();

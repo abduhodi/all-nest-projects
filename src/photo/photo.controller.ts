@@ -15,7 +15,7 @@ import { Photo } from './models/photo.model';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PhotoLikeDto } from './dto/photo-like.dto';
 import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guards';
+import { RolesGuard } from 'src/guards/roles.guard';
 
 @ApiTags('Photos')
 @Controller('photo')

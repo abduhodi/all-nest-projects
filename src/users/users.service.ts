@@ -1,15 +1,33 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
+import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User) private userRepo: typeof User) {}
+  constructor(
+    @InjectModel(User) private userRepo: typeof User,
+    private readonly roleService: RolesService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    return this.userRepo.create(createUserDto);
+    const newUser = await this.userRepo.create(createUserDto);
+    const role = await this.roleService.findRoleByName('admin');
+    if (!role) {
+      throw new BadRequestException('Role not found');
+    }
+    await newUser.$set('roles', [role.id]);
+    await newUser.save();
+    newUser.roles = [role];
+
+    return newUser;
   }
 
   async findAll(): Promise<User[]> {
