@@ -7,17 +7,22 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { PhotoService } from './photo.service';
 import { CreatePhotoDto } from './dto/create-photo.dto';
 import { UpdatePhotoDto } from './dto/update-photo.dto';
 import { Photo } from './models/photo.model';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { PhotoLikeDto } from './dto/photo-like.dto';
 import { Roles } from 'src/decorators/roles.decorator';
 import { RolesGuard } from 'src/guards/roles.guard';
+import { JwtGuard } from 'src/guards/jwt.guard';
+import { SelfGuard } from 'src/guards/self.guard';
+import { Request } from 'express';
 
 @ApiTags('Photos')
+@UseGuards(JwtGuard)
 @Controller('photo')
 export class PhotoController {
   constructor(private readonly photoService: PhotoService) {}
@@ -38,28 +43,30 @@ export class PhotoController {
 
   @ApiOperation({ summary: 'get photo by id' })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<Photo> {
-    return this.photoService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<Photo> {
+    return this.photoService.findOne(id);
   }
 
   @ApiOperation({ summary: 'update photo' })
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updatePhotoDto: UpdatePhotoDto,
   ): Promise<Photo> {
-    return this.photoService.update(+id, updatePhotoDto);
+    return this.photoService.update(id, updatePhotoDto);
   }
 
   @ApiOperation({ summary: 'delete photo' })
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<number> {
-    return this.photoService.remove(+id);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<number> {
+    return this.photoService.remove(id);
   }
 
   @ApiOperation({ summary: 'like photo' })
-  @Post('like')
-  async likePhoto(@Body() photoLikeDto: PhotoLikeDto) {
-    return this.photoService.likePhoto(photoLikeDto);
+  @Get('like/:id')
+  async likePhoto(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    return this.photoService.likePhoto(id, req);
   }
 }

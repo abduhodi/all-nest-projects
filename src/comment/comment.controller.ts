@@ -6,19 +6,27 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CommentLikeDto } from './dto/comment-like.dto';
+import { Roles } from 'src/decorators/roles.decorator';
+import { RolesGuard } from 'src/guards/roles.guard';
+import { JwtGuard } from 'src/guards/jwt.guard';
 
 @ApiTags('Comment')
+@UseGuards(JwtGuard)
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @ApiOperation({ summary: 'post new comment' })
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
   @Post()
   create(@Body() createCommentDto: CreateCommentDto) {
     return this.commentService.create(createCommentDto);
@@ -49,8 +57,8 @@ export class CommentController {
   }
 
   @ApiOperation({ summary: 'hit like to the comment' })
-  @Post('like')
-  likeComment(@Body() commentLikeDto: CommentLikeDto) {
-    return this.commentService.likeComment(commentLikeDto);
+  @Get('like/:id')
+  likeComment(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    return this.commentService.likeComment(id, req);
   }
 }

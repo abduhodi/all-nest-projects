@@ -9,6 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
 import { RolesService } from 'src/roles/roles.service';
+import { UUIDV4 } from 'sequelize';
 
 @Injectable()
 export class UsersService {

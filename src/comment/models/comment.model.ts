@@ -10,6 +10,7 @@ import {
 import { Photo } from 'src/photo/models/photo.model';
 import { User } from 'src/users/models/user.model';
 import { CommentLike } from './comment-like.model';
+import { UserComment } from 'src/users/models/user-comment.model';
 
 interface CommentAttribute {
   userId: number;
@@ -43,8 +44,8 @@ export class Comment extends Model<Comment, CommentAttribute> {
   })
   text: string;
 
-  @BelongsTo(() => User)
-  user: User;
+  @BelongsToMany(() => User, () => UserComment)
+  users: User[];
 
   @BelongsTo(() => Photo)
   photo: Photo;

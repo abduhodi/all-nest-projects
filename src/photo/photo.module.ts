@@ -6,13 +6,15 @@ import { Photo } from './models/photo.model';
 import { PhotoLike } from './models/photo-like.model';
 import { UsersModule } from 'src/users/users.module';
 import { UserPhoto } from './models/user_photo.model';
+import { UserComment } from 'src/users/models/user-comment.model';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Photo, PhotoLike, UserPhoto]),
+    SequelizeModule.forFeature([Photo, PhotoLike, UserPhoto, UserComment]),
     forwardRef(() => UsersModule),
   ],
   controllers: [PhotoController],
   providers: [PhotoService],
+  exports: [PhotoService],
 })
 export class PhotoModule {}

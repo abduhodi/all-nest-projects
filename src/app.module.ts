@@ -14,12 +14,19 @@ import { PhotoLike } from './photo/models/photo-like.model';
 import { Role } from './roles/models/role.model';
 import { RolesModule } from './roles/roles.module';
 import { UserRoles } from './roles/models/user-roles.model';
+import { JwtModule } from '@nestjs/jwt';
+import { UserComment } from './users/models/user-comment.model';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
+    }),
+    JwtModule.register({
+      global: true,
+      secret: 'secretKey',
+      signOptions: { expiresIn: '1d' },
     }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
@@ -37,6 +44,7 @@ import { UserRoles } from './roles/models/user-roles.model';
         PhotoLike,
         Role,
         UserRoles,
+        UserComment,
       ],
       logging: false,
       autoLoadModels: true,

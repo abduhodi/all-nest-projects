@@ -13,6 +13,7 @@ import { Photo } from 'src/photo/models/photo.model';
 import { UserPhoto } from 'src/photo/models/user_photo.model';
 import { Role } from 'src/roles/models/role.model';
 import { UserRoles } from 'src/roles/models/user-roles.model';
+import { UserComment } from './user-comment.model';
 
 interface UserAttribute {
   name: string;
@@ -50,8 +51,8 @@ export class User extends Model<User, UserAttribute> {
   @BelongsToMany(() => Photo, () => UserPhoto)
   photos: Photo[];
 
-  @HasMany(() => Comment)
-  comments: Comment[];
+  @BelongsToMany(() => Comment, () => UserComment)
+  photoComments: Comment[];
 
   @BelongsToMany(() => Comment, () => CommentLike)
   likedComments: Comment[];

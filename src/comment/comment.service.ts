@@ -1,20 +1,39 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  UseGuards,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Comment } from './models/comment.model';
-import { CommentLikeDto } from './dto/comment-like.dto';
 import { UsersService } from 'src/users/users.service';
+import { User } from 'src/users/models/user.model';
+import { PhotoService } from 'src/photo/photo.service';
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectModel(Comment) private readonly commentRepo: typeof Comment,
     private readonly userService: UsersService,
+    private readonly photoService: PhotoService,
   ) {}
 
-  create(createCommentDto: CreateCommentDto) {
-    return this.commentRepo.create(createCommentDto);
+  async create(createCommentDto: CreateCommentDto) {
+    const user = await this.userService.findOne(createCommentDto.userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const photo = await this.photoService.findOne(createCommentDto.photoId);
+    if (!photo) {
+      throw new NotFoundException('Photo not found');
+    }
+
+    const comment = await this.commentRepo.create(createCommentDto);
+    await comment.$set('users', [user.id]);
+    return comment;
   }
 
   findAll() {
@@ -37,23 +56,21 @@ export class CommentService {
     return this.commentRepo.destroy({ where: { id } });
   }
 
-  async likeComment(commentLikeDto: CommentLikeDto) {
-    const comment = await this.commentRepo.findByPk(commentLikeDto.commentId);
+  async likeComment(id: number, req: any) {
+    const comment = await this.findOne(id);
     if (!comment) {
       throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
     }
-
-    const user = await this.userService.findOne(commentLikeDto.userId);
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const user: User = req.user;
+    if (comment.likes.some((ur) => ur.id === user.id)) {
+      await comment.$remove('likes', [user.id]);
+      await user.$remove('likedComments', [comment.id]);
+    } else {
+      await comment.$set('likes', [user.id]);
+      await user.$set('likedComments', [comment.id]);
     }
 
-    await comment.$set('likes', [user.id]);
-    await user.$set('likedComments', [comment.id]);
-
-    const newComment = await this.commentRepo.findByPk(comment.id, {
-      include: { all: true },
-    });
+    const newComment = await this.findOne(id);
     return {
       id: newComment.id,
       text: newComment.text,
