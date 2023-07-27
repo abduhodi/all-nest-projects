@@ -11,7 +11,9 @@ import { BuilderService } from './builder.service';
 import { CreateBuilderDTO } from './dto/create-builder.dto';
 import { Builder } from './models/builder.model';
 import { UpdateBuilderDTO } from './dto/update-builder.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Builder')
 @Controller('builder')
 export class BuilderController {
   constructor(private readonly builderService: BuilderService) {}

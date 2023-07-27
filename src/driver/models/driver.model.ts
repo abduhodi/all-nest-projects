@@ -6,8 +6,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { Machine } from 'src/machine/models/machine.model';
-import { MachineDriver } from 'src/machine_driver/models/machine_driver.model';
+import { Machine } from '../../machine/models/machine.model';
+import { MachineDriver } from '../../machine_driver/models/machine_driver.model';
 
 interface DriverAttribute {
   first_name: string;

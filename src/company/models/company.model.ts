@@ -1,6 +1,6 @@
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
-import { Builder } from 'src/builder/models/builder.model';
-import { Machine } from 'src/machine/models/machine.model';
+import { Builder } from '../../builder/models/builder.model';
+import { Machine } from '../../machine/models/machine.model';
 
 interface CompanyAttributes {
   name: string;

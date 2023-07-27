@@ -8,8 +8,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.model';
-import { RolesService } from 'src/roles/roles.service';
-import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { AddRoleDTO } from './dto/add-role.dto';
+import { ActivateUserDTO } from './dto/activate-user.dto';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class UserService {
@@ -24,8 +25,8 @@ export class UserService {
     if (!role) {
       throw new BadRequestException('Role not found');
     }
-    await newUser.$set('roles', [role.id]);
-    await newUser.save();
+    // await newUser.$set('roles', [role.id]);
+    // await newUser.save();
     newUser.roles = [role];
 
     return newUser;
@@ -58,9 +59,55 @@ export class UserService {
   }
 
   async deleteUser(id: number) {
-    const user = await this.userRepo.destroy({ where: { id } });
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    return this.userRepo.destroy({ where: { id } });
+    // if (!user) {
+    //   throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    // }
+  }
+
+  async addRole(addRoleDTO: AddRoleDTO): Promise<User> {
+    const user = await this.userRepo.findByPk(addRoleDTO.userId, {});
+    const role = await this.roleService.findRoleByName(addRoleDTO.value);
+    if (!user || !role) {
+      throw new HttpException('user or role not found', HttpStatus.NOT_FOUND);
     }
+    await user.$add('roles', role.id);
+    const updatedUser = await this.userRepo.findByPk(addRoleDTO.userId, {
+      include: { all: true },
+    });
+    return updatedUser;
+  }
+
+  async removeRole(addRoleDTO: AddRoleDTO): Promise<User> {
+    const user = await this.userRepo.findByPk(addRoleDTO.userId, {});
+    const role = await this.roleService.findRoleByName(addRoleDTO.value);
+    if (!user || !role) {
+      throw new HttpException('user or role not found', HttpStatus.NOT_FOUND);
+    }
+    await user.$remove('roles', role.id);
+    const updatedUser = await this.userRepo.findByPk(addRoleDTO.userId, {
+      include: { all: true },
+    });
+    return updatedUser;
+  }
+
+  async activateUser(activateUserDTO: ActivateUserDTO): Promise<User> {
+    const user = await this.userRepo.findByPk(activateUserDTO.userId);
+    if (!user) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+    user.isActive = true;
+    await user.save();
+    return user;
+  }
+
+  async deactivateUser(activateUserDTO: ActivateUserDTO): Promise<User> {
+    const user = await this.userRepo.findByPk(activateUserDTO.userId);
+    if (!user) {
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
+    }
+    user.isActive = false;
+    await user.save();
+    return user;
   }
 }

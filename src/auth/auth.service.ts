@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UserService } from 'src/user/user.service';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/user/models/user.model';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDTO } from './dto/login-user.dto';
+import { LoginDTO } from './dto/login-auth.dto';
+import { UserService } from '../user/user.service';
+import { CreateUserDto } from '../user/dto/create-user.dto';
+import { User } from '../user/models/user.model';
 
 @Injectable()
 export class AuthService {
@@ -33,18 +33,25 @@ export class AuthService {
   }
 
   async login(loginDTO: LoginDTO) {
-    const user = await this.userService.getUserByEmail(loginDTO.email);
+    const user = await this.validateUser(loginDTO);
     if (!user) {
-      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-    }
-
-    const verify = await bcrypt.compare(loginDTO.password, user.password);
-    if (!verify) {
-      throw new HttpException(
-        'login or password is incorrect',
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException('user not found', HttpStatus.NOT_FOUND);
     }
     return this.generateToken(user);
+  }
+
+  private async validateUser(loginDTO: LoginDTO) {
+    const user = await this.userService.getUserByEmail(loginDTO.email);
+    if (!user) {
+      throw new UnauthorizedException('email or password is incorrect');
+    }
+    const validPassword = await bcrypt.compare(
+      loginDTO.password,
+      user.password,
+    );
+    if (!validPassword) {
+      throw new UnauthorizedException('email or password is incorrect');
+    }
+    return user;
   }
 }
