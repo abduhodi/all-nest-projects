@@ -6,7 +6,7 @@ import {
   Model,
 } from 'sequelize-typescript';
 import { User } from './user.model';
-import { Comment } from 'src/comment/models/comment.model';
+import { Comment } from '../../comment/models/comment.model';
 
 @Table({ tableName: 'user_comment' })
 export class UserComment extends Model<UserComment> {

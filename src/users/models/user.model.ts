@@ -6,14 +6,14 @@ import {
   HasMany,
   BelongsToMany,
 } from 'sequelize-typescript';
-import { CommentLike } from 'src/comment/models/comment-like.model';
-import { Comment } from 'src/comment/models/comment.model';
-import { PhotoLike } from 'src/photo/models/photo-like.model';
-import { Photo } from 'src/photo/models/photo.model';
-import { UserPhoto } from 'src/photo/models/user_photo.model';
-import { Role } from 'src/roles/models/role.model';
-import { UserRoles } from 'src/roles/models/user-roles.model';
 import { UserComment } from './user-comment.model';
+import { Comment } from '../../comment/models/comment.model';
+import { CommentLike } from '../../comment/models/comment-like.model';
+import { Role } from '../../roles/models/role.model';
+import { UserRoles } from '../../roles/models/user-roles.model';
+import { UserPost } from '../../photo/models/user_post.model';
+import { PostLike } from '../../photo/models/post-like.model';
+import { Posts } from '../../photo/models/post.model';
 
 interface UserAttribute {
   name: string;
@@ -48,17 +48,17 @@ export class User extends Model<User, UserAttribute> {
   })
   password: string;
 
-  @BelongsToMany(() => Photo, () => UserPhoto)
-  photos: Photo[];
+  @BelongsToMany(() => Posts, () => UserPost)
+  posts: Posts[];
 
   @BelongsToMany(() => Comment, () => UserComment)
-  photoComments: Comment[];
+  postComments: Comment[];
 
   @BelongsToMany(() => Comment, () => CommentLike)
   likedComments: Comment[];
 
-  @BelongsToMany(() => Photo, () => PhotoLike)
-  likedPhotos: Photo[];
+  @BelongsToMany(() => Posts, () => PostLike)
+  likedPosts: Posts[];
 
   @BelongsToMany(() => Role, () => UserRoles)
   roles: Role[];

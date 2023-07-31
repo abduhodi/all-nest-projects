@@ -2,20 +2,24 @@ import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
-import { PhotoModule } from './photo/photo.module';
 import { User } from './users/models/user.model';
-import { Photo } from './photo/models/photo.model';
-import { UserPhoto } from './photo/models/user_photo.model';
 import { AuthModule } from './auth/auth.module';
 import { CommentModule } from './comment/comment.module';
 import { Comment } from './comment/models/comment.model';
 import { CommentLike } from './comment/models/comment-like.model';
-import { PhotoLike } from './photo/models/photo-like.model';
 import { Role } from './roles/models/role.model';
 import { RolesModule } from './roles/roles.module';
 import { UserRoles } from './roles/models/user-roles.model';
 import { JwtModule } from '@nestjs/jwt';
 import { UserComment } from './users/models/user-comment.model';
+import { UserPost } from './photo/models/user_post.model';
+import { PostLike } from './photo/models/post-like.model';
+import { Asset } from './assets/models/assets.model';
+import { AssetModule } from './assets/assets.module';
+import { PostModule } from './photo/post.module';
+import { Posts } from './photo/models/post.model';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -28,6 +32,9 @@ import { UserComment } from './users/models/user-comment.model';
       secret: 'secretKey',
       signOptions: { expiresIn: '1d' },
     }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'),
+    }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: process.env.db_host,
@@ -37,23 +44,25 @@ import { UserComment } from './users/models/user-comment.model';
       database: process.env.db_database,
       models: [
         User,
-        Photo,
-        UserPhoto,
+        Posts,
+        UserPost,
         Comment,
         CommentLike,
-        PhotoLike,
+        PostLike,
         Role,
         UserRoles,
         UserComment,
+        Asset,
       ],
       logging: false,
       autoLoadModels: true,
     }),
     UsersModule,
-    PhotoModule,
     AuthModule,
     CommentModule,
     RolesModule,
+    AssetModule,
+    PostModule,
   ],
   controllers: [],
   providers: [],

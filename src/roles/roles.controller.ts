@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -47,7 +48,7 @@ export class RolesController {
 
   @ApiOperation({ summary: 'delete role' })
   @Delete(':id')
-  deleteRole(@Param('id') id: string): Promise<number> {
+  deleteRole(@Param('id', ParseIntPipe) id: number): Promise<number> {
     return this.rolesService.deleteRole(+id);
   }
 }

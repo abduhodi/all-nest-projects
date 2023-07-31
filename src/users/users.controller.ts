@@ -7,16 +7,18 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './models/user.model';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtGuard } from 'src/guards/jwt.guard';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { SelfGuard } from 'src/guards/self.guard';
+import { JwtGuard } from '../guards/jwt.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
+import { SelfGuard } from '../guards/self.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 @UseGuards(JwtGuard)

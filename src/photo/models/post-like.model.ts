@@ -5,23 +5,23 @@ import {
   DataType,
   ForeignKey,
 } from 'sequelize-typescript';
-import { Photo } from './photo.model';
-import { User } from 'src/users/models/user.model';
+import { User } from '../../users/models/user.model';
+import { Posts } from './post.model';
 
-interface PhotoLikeAttribute {
+interface PostLikeAttribute {
   photoId: number;
   userId: number;
 }
 
-@Table({ tableName: 'photo_like' })
-export class PhotoLike extends Model<PhotoLike, PhotoLikeAttribute> {
+@Table({ tableName: 'post_like' })
+export class PostLike extends Model<PostLike, PostLikeAttribute> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   })
   id: number;
-  @ForeignKey(() => Photo)
+  @ForeignKey(() => Posts)
   @Column({
     type: DataType.INTEGER,
   })

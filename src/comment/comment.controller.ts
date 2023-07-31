@@ -14,9 +14,10 @@ import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/decorators/roles.decorator';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { JwtGuard } from 'src/guards/jwt.guard';
+import { Request } from 'express';
+import { JwtGuard } from '../guards/jwt.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { RolesGuard } from '../guards/roles.guard';
 
 @ApiTags('Comment')
 @UseGuards(JwtGuard)
@@ -25,8 +26,8 @@ export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @ApiOperation({ summary: 'post new comment' })
-  @Roles('ADMIN')
-  @UseGuards(RolesGuard)
+  // @Roles('ADMIN')
+  // @UseGuards(RolesGuard)
   @Post()
   create(@Body() createCommentDto: CreateCommentDto) {
     return this.commentService.create(createCommentDto);

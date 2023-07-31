@@ -6,7 +6,7 @@ import {
   ForeignKey,
 } from 'sequelize-typescript';
 import { Comment } from './comment.model';
-import { User } from 'src/users/models/user.model';
+import { User } from '../../users/models/user.model';
 
 interface CommentLikeAttribute {
   commentId: number;

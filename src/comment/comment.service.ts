@@ -9,16 +9,17 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Comment } from './models/comment.model';
-import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/models/user.model';
-import { PhotoService } from 'src/photo/photo.service';
+import { Request } from 'express';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/models/user.model';
+import { PostService } from '../photo/post.service';
 
 @Injectable()
 export class CommentService {
   constructor(
     @InjectModel(Comment) private readonly commentRepo: typeof Comment,
     private readonly userService: UsersService,
-    private readonly photoService: PhotoService,
+    private readonly photoService: PostService,
   ) {}
 
   async create(createCommentDto: CreateCommentDto) {
@@ -52,16 +53,20 @@ export class CommentService {
     return updated[1][0].dataValues;
   }
 
-  remove(id: number) {
-    return this.commentRepo.destroy({ where: { id } });
+  async remove(id: number) {
+    const deleted = await this.commentRepo.destroy({ where: { id } });
+    return deleted == 1
+      ? { message: 'delete success' }
+      : { message: 'delete failure' };
   }
 
-  async likeComment(id: number, req: any) {
+  async likeComment(id: number, req: Request) {
     const comment = await this.findOne(id);
     if (!comment) {
       throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
     }
-    const user: User = req.user;
+    // @ts-ignore
+    const user: User = await this.userService.findOne(req.user.id);
     if (comment.likes.some((ur) => ur.id === user.id)) {
       await comment.$remove('likes', [user.id]);
       await user.$remove('likedComments', [comment.id]);

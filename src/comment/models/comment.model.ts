@@ -7,10 +7,10 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { Photo } from 'src/photo/models/photo.model';
-import { User } from 'src/users/models/user.model';
 import { CommentLike } from './comment-like.model';
-import { UserComment } from 'src/users/models/user-comment.model';
+import { User } from '../../users/models/user.model';
+import { UserComment } from '../../users/models/user-comment.model';
+import { Posts } from '../../photo/models/post.model';
 
 interface CommentAttribute {
   userId: number;
@@ -33,7 +33,7 @@ export class Comment extends Model<Comment, CommentAttribute> {
   })
   userId: number;
 
-  @ForeignKey(() => Photo)
+  @ForeignKey(() => Posts)
   @Column({
     type: DataType.INTEGER,
   })
@@ -47,8 +47,8 @@ export class Comment extends Model<Comment, CommentAttribute> {
   @BelongsToMany(() => User, () => UserComment)
   users: User[];
 
-  @BelongsTo(() => Photo)
-  photo: Photo;
+  @BelongsTo(() => Posts)
+  photo: Posts;
 
   @BelongsToMany(() => User, () => CommentLike)
   likes: User[];

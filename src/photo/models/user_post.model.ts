@@ -5,16 +5,16 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { User } from 'src/users/models/user.model';
-import { Photo } from './photo.model';
+import { User } from '../../users/models/user.model';
+import { Posts } from './post.model';
 
-interface UserPhotoAttribute {
+interface UserPostAttribute {
   userId: number;
   photoId: number;
 }
 
-@Table({ tableName: 'user_photo' })
-export class UserPhoto extends Model<UserPhoto, UserPhotoAttribute> {
+@Table({ tableName: 'user_post' })
+export class UserPost extends Model<UserPost, UserPostAttribute> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
@@ -28,9 +28,9 @@ export class UserPhoto extends Model<UserPhoto, UserPhotoAttribute> {
   })
   userId: number;
 
-  @ForeignKey(() => Photo)
+  @ForeignKey(() => Posts)
   @Column({
     type: DataType.INTEGER,
   })
-  photoId: number;
+  postId: number;
 }
