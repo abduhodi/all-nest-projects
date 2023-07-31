@@ -6,10 +6,11 @@ import { User } from './models/user.model';
 import { UserComment } from './models/user-comment.model';
 import { RolesModule } from '../roles/roles.module';
 import { Comment } from '../comment/models/comment.model';
+import { Follow } from './models/user-follow.model';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, UserComment, Comment]),
+    SequelizeModule.forFeature([User, UserComment, Comment, Follow]),
     forwardRef(() => RolesModule),
   ],
   controllers: [UsersController],

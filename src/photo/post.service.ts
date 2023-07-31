@@ -117,7 +117,6 @@ export class PostService {
     const updatedPost = await this.postRepo.findByPk(id, {
       include: { all: true },
     });
-    console.log(updatedPost);
 
     return {
       id: updatedPost.id,

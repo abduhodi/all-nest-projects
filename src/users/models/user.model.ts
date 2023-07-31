@@ -3,8 +3,8 @@ import {
   Column,
   Table,
   DataType,
-  HasMany,
   BelongsToMany,
+  HasMany,
 } from 'sequelize-typescript';
 import { UserComment } from './user-comment.model';
 import { Comment } from '../../comment/models/comment.model';
@@ -47,6 +47,11 @@ export class User extends Model<User, UserAttribute> {
     type: DataType.STRING,
   })
   password: string;
+
+  @Column({
+    type: DataType.STRING,
+  })
+  profilePhoto: string;
 
   @BelongsToMany(() => Posts, () => UserPost)
   posts: Posts[];

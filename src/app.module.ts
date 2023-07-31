@@ -20,6 +20,7 @@ import { PostModule } from './photo/post.module';
 import { Posts } from './photo/models/post.model';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { Follow } from './users/models/user-follow.model';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { join } from 'path';
         UserRoles,
         UserComment,
         Asset,
+        Follow,
       ],
       logging: false,
       autoLoadModels: true,
