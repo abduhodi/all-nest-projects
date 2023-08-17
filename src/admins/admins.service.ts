@@ -38,7 +38,7 @@ export class AdminsService {
     });
     await admin.save();
 
-    await this.mailService.sendConfirmationMail(admin, 'admins');
+    // await this.mailService.sendConfirmationMail(admin, 'admins');
 
     return { message: 'Confirm your email' };
   }
